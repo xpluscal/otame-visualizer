@@ -8,10 +8,16 @@
   export let rotateX: number = 15;
   export let rotateY: number = 45;
   export let showGrid: boolean = true;
+  export let zoom: number = 1;
   
-  // Calculate the size of each face
-  $: faceSize = size * 0.8;
+  // Calculate the size of each face and cube
+  $: cubeSize = size * 0.8;
+  $: faceSize = cubeSize;
   $: ledSize = faceSize / LED_CONFIG.MATRIX_SIZE;
+  
+  // Center position for the cube
+  $: centerX = size / 2;
+  $: centerY = size / 2;
   
   // Get the pixels for each face
   $: topPixels = pixels.slice(0, LED_CONFIG.LEDS_PER_MATRIX);
@@ -27,153 +33,187 @@
 </script>
 
 <div 
-  class="relative"
+  class="relative glow"
   style="
     width: {size}px; 
     height: {size}px; 
-    perspective: 1000px;
+    perspective: 1200px;
   "
 >
   <div 
     class="absolute w-full h-full"
     style="
       transform-style: preserve-3d;
-      transform: rotateX({rotateX}deg) rotateY({rotateY}deg);
+      transform: rotateX({rotateX}deg) rotateY({rotateY}deg) scale({zoom});
+      transition: transform 0.1s ease;
+      transform-origin: center center;
     "
   >
-    <!-- Top face -->
-    <div 
-      class={cn(
-        "absolute flex flex-wrap",
-        showGrid ? "border border-gray-300" : ""
-      )}
+    <div
+      class="absolute"
       style="
-        width: {faceSize}px; 
-        height: {faceSize}px; 
-        transform: translateZ({faceSize/2}px) translateX({(size-faceSize)/2}px) translateY({(size-faceSize)/2}px);
+        width: {cubeSize}px;
+        height: {cubeSize}px;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+        transform-style: preserve-3d;
       "
     >
-      {#each topPixels as pixel, i}
-        <div
-          class={cn(
-            "transition-colors duration-100",
-            showGrid ? "border border-gray-100/10" : ""
-          )}
-          style="
-            width: {ledSize}px; 
-            height: {ledSize}px; 
-            background-color: {rgbToCss(pixel)};
-          "
-        ></div>
-      {/each}
-    </div>
-    
-    <!-- Front face -->
-    <div 
-      class={cn(
-        "absolute flex flex-wrap",
-        showGrid ? "border border-gray-300" : ""
-      )}
-      style="
-        width: {faceSize}px; 
-        height: {faceSize}px; 
-        transform: rotateX(90deg) translateZ({faceSize/2}px) translateX({(size-faceSize)/2}px) translateY({(size-faceSize)/2}px);
-      "
-    >
-      {#each frontPixels as pixel, i}
-        <div
-          class={cn(
-            "transition-colors duration-100",
-            showGrid ? "border border-gray-100/10" : ""
-          )}
-          style="
-            width: {ledSize}px; 
-            height: {ledSize}px; 
-            background-color: {rgbToCss(pixel)};
-          "
-        ></div>
-      {/each}
-    </div>
-    
-    <!-- Left face -->
-    <div 
-      class={cn(
-        "absolute flex flex-wrap",
-        showGrid ? "border border-gray-300" : ""
-      )}
-      style="
-        width: {faceSize}px; 
-        height: {faceSize}px; 
-        transform: rotateY(-90deg) translateZ({faceSize/2}px) translateX({(size-faceSize)/2}px) translateY({(size-faceSize)/2}px);
-      "
-    >
-      {#each leftPixels as pixel, i}
-        <div
-          class={cn(
-            "transition-colors duration-100",
-            showGrid ? "border border-gray-100/10" : ""
-          )}
-          style="
-            width: {ledSize}px; 
-            height: {ledSize}px; 
-            background-color: {rgbToCss(pixel)};
-          "
-        ></div>
-      {/each}
-    </div>
-    
-    <!-- Right face -->
-    <div 
-      class={cn(
-        "absolute flex flex-wrap",
-        showGrid ? "border border-gray-300" : ""
-      )}
-      style="
-        width: {faceSize}px; 
-        height: {faceSize}px; 
-        transform: rotateY(90deg) translateZ({faceSize/2}px) translateX({(size-faceSize)/2}px) translateY({(size-faceSize)/2}px);
-      "
-    >
-      {#each rightPixels as pixel, i}
-        <div
-          class={cn(
-            "transition-colors duration-100",
-            showGrid ? "border border-gray-100/10" : ""
-          )}
-          style="
-            width: {ledSize}px; 
-            height: {ledSize}px; 
-            background-color: {rgbToCss(pixel)};
-          "
-        ></div>
-      {/each}
-    </div>
-    
-    <!-- Bottom face -->
-    <div 
-      class={cn(
-        "absolute flex flex-wrap",
-        showGrid ? "border border-gray-300" : ""
-      )}
-      style="
-        width: {faceSize}px; 
-        height: {faceSize}px; 
-        transform: rotateX(180deg) translateZ({faceSize/2}px) translateX({(size-faceSize)/2}px) translateY({(size-faceSize)/2}px);
-      "
-    >
-      {#each bottomPixels as pixel, i}
-        <div
-          class={cn(
-            "transition-colors duration-100",
-            showGrid ? "border border-gray-100/10" : ""
-          )}
-          style="
-            width: {ledSize}px; 
-            height: {ledSize}px; 
-            background-color: {rgbToCss(pixel)};
-          "
-        ></div>
-      {/each}
+      <!-- Top face -->
+      <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateX(0deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+        {#each topPixels as pixel, i}
+          <div
+            class={cn(
+              "transition-colors duration-100",
+              showGrid ? "border border-surface-300/10" : ""
+            )}
+            style="
+              width: {ledSize}px; 
+              height: {ledSize}px; 
+              background-color: {rgbToCss(pixel)};
+            "
+          ></div>
+        {/each}
+      </div>
+      
+      <!-- Front face -->
+      <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateX(90deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+        {#each frontPixels as pixel, i}
+          <div
+            class={cn(
+              "transition-colors duration-100",
+              showGrid ? "border border-surface-300/10" : ""
+            )}
+            style="
+              width: {ledSize}px; 
+              height: {ledSize}px; 
+              background-color: {rgbToCss(pixel)};
+            "
+          ></div>
+        {/each}
+      </div>
+      
+      <!-- Left face -->
+      <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateY(-90deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+        {#each leftPixels as pixel, i}
+          <div
+            class={cn(
+              "transition-colors duration-100",
+              showGrid ? "border border-surface-300/10" : ""
+            )}
+            style="
+              width: {ledSize}px; 
+              height: {ledSize}px; 
+              background-color: {rgbToCss(pixel)};
+            "
+          ></div>
+        {/each}
+      </div>
+      
+      <!-- Right face -->
+      <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateY(90deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+        {#each rightPixels as pixel, i}
+          <div
+            class={cn(
+              "transition-colors duration-100",
+              showGrid ? "border border-surface-300/10" : ""
+            )}
+            style="
+              width: {ledSize}px; 
+              height: {ledSize}px; 
+              background-color: {rgbToCss(pixel)};
+            "
+          ></div>
+        {/each}
+      </div>
+      
+      <!-- Bottom face -->
+      <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateX(180deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+        {#each bottomPixels as pixel, i}
+          <div
+            class={cn(
+              "transition-colors duration-100",
+              showGrid ? "border border-surface-300/10" : ""
+            )}
+            style="
+              width: {ledSize}px; 
+              height: {ledSize}px; 
+              background-color: {rgbToCss(pixel)};
+            "
+          ></div>
+        {/each}
+      </div>
+      
+      <!-- Back face (optional, not visible in your setup) -->
+      <!-- <div 
+        class={cn(
+          "absolute flex flex-wrap",
+          showGrid ? "border border-surface-400" : ""
+        )}
+        style="
+          width: {faceSize}px; 
+          height: {faceSize}px; 
+          transform: rotateY(180deg) translateZ({cubeSize/2}px);
+          transform-origin: center center;
+        "
+      >
+      </div> -->
     </div>
   </div>
 </div> 

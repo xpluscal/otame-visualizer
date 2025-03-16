@@ -10,7 +10,7 @@
   $: matrixSize = size / 3;
 </script>
 
-<div class="relative grid grid-cols-3 gap-1">
+<div class="relative grid grid-cols-3 gap-1 glow">
   <!-- Empty top-left -->
   <div></div>
   

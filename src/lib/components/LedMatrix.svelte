@@ -25,7 +25,7 @@
 <div 
   class={cn(
     "relative flex flex-wrap",
-    showGrid ? "border border-gray-300" : ""
+    showGrid ? "border border-surface-400" : ""
   )}
   style="width: {size}px; height: {size}px;"
 >
@@ -33,12 +33,13 @@
     <div
       class={cn(
         "transition-colors duration-100",
-        showGrid ? "border border-gray-100/10" : ""
+        showGrid ? "border border-surface-300/10" : ""
       )}
       style="
         width: {ledSize}px; 
         height: {ledSize}px; 
         background-color: {rgbToCss(pixel)};
+        box-shadow: 0 0 5px {rgbToCss(pixel)};
       "
     ></div>
   {/each}

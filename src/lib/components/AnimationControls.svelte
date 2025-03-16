@@ -9,6 +9,7 @@
   export let rotateX: number = 15;
   export let rotateY: number = 45;
   export let is3D: boolean = false;
+  export let zoom: number = 1;
   
   // Animation mode options
   const animationOptions = Object.values(ANIMATION_MODES);
@@ -52,6 +53,12 @@
     rotateY = parseInt(target.value);
   }
   
+  // Handle zoom change
+  function handleZoomChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    zoom = parseFloat(target.value);
+  }
+  
   // Toggle 3D view
   function toggle3D() {
     is3D = !is3D;
@@ -61,18 +68,25 @@
   function toggleGrid() {
     showGrid = !showGrid;
   }
+  
+  // Reset rotation
+  function resetRotation() {
+    rotateX = 15;
+    rotateY = 45;
+    zoom = 1;
+  }
 </script>
 
-<div class="bg-gray-100 p-4 rounded-lg shadow-md">
-  <h2 class="text-xl font-bold mb-4">Animation Controls</h2>
+<div class="bg-surface-200 p-4 rounded-lg">
+  <h2 class="text-xl font-bold mb-4 text-text-primary">Animation Controls</h2>
   
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 gap-4">
     <!-- Animation Mode -->
     <div class="mb-4">
-      <label for="animation-mode" class="block text-sm font-medium mb-1">Animation Mode</label>
+      <label for="animation-mode" class="block text-sm font-medium mb-1 text-text-secondary">Animation Mode</label>
       <select 
         id="animation-mode" 
-        class="w-full p-2 border border-gray-300 rounded-md"
+        class="w-full p-2 border border-surface-400 rounded-md bg-surface-300 text-text-primary"
         value={animationMode}
         on:change={handleModeChange}
       >
@@ -84,7 +98,7 @@
     
     <!-- Amplitude -->
     <div class="mb-4">
-      <label for="amplitude" class="block text-sm font-medium mb-1">
+      <label for="amplitude" class="block text-sm font-medium mb-1 text-text-secondary">
         Amplitude: {amplitude}
       </label>
       <input 
@@ -100,12 +114,12 @@
     </div>
     
     <!-- Color Controls -->
-    <div class="mb-4 col-span-1 md:col-span-2">
-      <h3 class="text-lg font-semibold mb-2">Base Color</h3>
+    <div class="mb-4">
+      <h3 class="text-lg font-semibold mb-2 text-text-primary">Base Color</h3>
       <div class="grid grid-cols-3 gap-4">
         <!-- Red -->
         <div>
-          <label for="red" class="block text-sm font-medium mb-1">
+          <label for="red" class="block text-sm font-medium mb-1 text-text-secondary">
             Red: {Math.round(baseColor[0] * 255)}
           </label>
           <input 
@@ -121,7 +135,7 @@
         
         <!-- Green -->
         <div>
-          <label for="green" class="block text-sm font-medium mb-1">
+          <label for="green" class="block text-sm font-medium mb-1 text-text-secondary">
             Green: {Math.round(baseColor[1] * 255)}
           </label>
           <input 
@@ -137,7 +151,7 @@
         
         <!-- Blue -->
         <div>
-          <label for="blue" class="block text-sm font-medium mb-1">
+          <label for="blue" class="block text-sm font-medium mb-1 text-text-secondary">
             Blue: {Math.round(baseColor[2] * 255)}
           </label>
           <input 
@@ -155,10 +169,10 @@
       <!-- Color Preview -->
       <div class="mt-2 flex items-center">
         <div 
-          class="w-8 h-8 rounded-full border border-gray-300 mr-2"
+          class="w-8 h-8 rounded-full border border-surface-400 mr-2 glow"
           style="background-color: rgb({baseColor[0] * 255}, {baseColor[1] * 255}, {baseColor[2] * 255});"
         ></div>
-        <span class="text-sm">
+        <span class="text-sm text-text-secondary">
           RGB({Math.round(baseColor[0] * 255)}, {Math.round(baseColor[1] * 255)}, {Math.round(baseColor[2] * 255)})
         </span>
       </div>
@@ -166,19 +180,45 @@
     
     <!-- 3D Controls (only shown when 3D is enabled) -->
     {#if is3D}
-      <div class="mb-4 col-span-1 md:col-span-2">
-        <h3 class="text-lg font-semibold mb-2">3D Rotation</h3>
-        <div class="grid grid-cols-2 gap-4">
+      <div class="mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold text-text-primary">3D Controls</h3>
+          <button 
+            class="px-2 py-1 text-xs rounded-md bg-surface-400 text-text-primary hover:bg-surface-500"
+            on:click={resetRotation}
+          >
+            Reset View
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-4 mb-4">
+          <!-- Zoom -->
+          <div>
+            <label for="zoom" class="block text-sm font-medium mb-1 text-text-secondary">
+              Zoom: {zoom.toFixed(2)}x
+            </label>
+            <input 
+              id="zoom" 
+              type="range" 
+              min="0.5" 
+              max="2" 
+              step="0.05"
+              class="w-full"
+              value={zoom}
+              on:input={handleZoomChange}
+            />
+          </div>
+          
           <!-- Rotate X -->
           <div>
-            <label for="rotate-x" class="block text-sm font-medium mb-1">
+            <label for="rotate-x" class="block text-sm font-medium mb-1 text-text-secondary">
               Rotate X: {rotateX}°
             </label>
             <input 
               id="rotate-x" 
               type="range" 
-              min="-180" 
-              max="180" 
+              min="-90" 
+              max="90" 
               class="w-full"
               value={rotateX}
               on:input={handleRotateXChange}
@@ -187,7 +227,7 @@
           
           <!-- Rotate Y -->
           <div>
-            <label for="rotate-y" class="block text-sm font-medium mb-1">
+            <label for="rotate-y" class="block text-sm font-medium mb-1 text-text-secondary">
               Rotate Y: {rotateY}°
             </label>
             <input 
@@ -201,15 +241,21 @@
             />
           </div>
         </div>
+        
+        <div class="text-xs text-text-muted italic">
+          Tip: You can also click and drag the cube to rotate, and use the mouse wheel to zoom.
+        </div>
       </div>
     {/if}
     
     <!-- Toggle Buttons -->
-    <div class="flex space-x-4 col-span-1 md:col-span-2">
+    <div class="flex space-x-4">
       <button 
         class={cn(
-          "px-4 py-2 rounded-md",
-          is3D ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-700"
+          "px-4 py-2 rounded-md flex-1 transition-all",
+          is3D 
+            ? "bg-primary text-text-primary glow" 
+            : "bg-surface-400 text-text-primary hover:bg-surface-500"
         )}
         on:click={toggle3D}
       >
@@ -218,8 +264,10 @@
       
       <button 
         class={cn(
-          "px-4 py-2 rounded-md",
-          showGrid ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-700"
+          "px-4 py-2 rounded-md flex-1 transition-all",
+          showGrid 
+            ? "bg-primary text-text-primary glow" 
+            : "bg-surface-400 text-text-primary hover:bg-surface-500"
         )}
         on:click={toggleGrid}
       >
