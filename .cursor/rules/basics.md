@@ -1,0 +1,8 @@
+- use pnpm as the package manager
+- must store new versions and features in a changelog.md file
+- use typescript
+- use svelte for the frontend
+- use electron for the backend
+- use tailwind css for styling
+- use vite for the build tool
+- keep you code lean, prevent duplication. for that reason you must first search if the code already exists someplace else before writing it.
